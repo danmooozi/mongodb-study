@@ -1,0 +1,477 @@
+### 질문 2 #attribute
+어떤 시나리오에 Attribute Pattern을 적용하는 것이 가장 적합한가?
+
+**정답:**
+- 특정 필드가 유사한 특성을 공유하고, 해당 필드를 검색하고자 할 때. Attribute Pattern은 서로 유사한 특성을 공유하는 필드에 대해 검색하거나 작업을 수행하고자 할 때 가장 적합합니다. Attribute Pattern을 적용하면 관련 속성을 배열이나 하위 문서로 그룹화하여 데이터를 보다 효율적이고 논리적으로 쿼리하거나 조작할 수 있습니다.
+
+**오답:**
+- 문서를 삽입/수정하기 전에 문서 검증을 적용해야 합니다. 문서 검증은 Attribute Pattern과는 직접적인 관련이 없습니다. 문서 검증은 데이터 유형, 필드 존재 여부 또는 데이터 형식과 같은 문서의 구조와 내용에 대한 규칙이나 제약을 정의하는 것을 포함하며, 이는 Attribute Pattern과 별개의 개념입니다.
+- 컬렉션의 문서가 상당히 큽니다. 컬렉션의 문서 크기는 Attribute Pattern을 적용하는 결정적 요인이 아닙니다. Attribute Pattern은 문서 크기보다는 유사한 특성을 공유하는 데이터의 조직화와 구조화에 중점을 둡니다.
+- 온라인 스토어의 제품 카테고리. 온라인 스토어의 제품 카테고리 개념은 Attribute Pattern과 직접적으로 일치하지 않습니다. 제품 카테고리화는 계층 구조 또는 태그 시스템을 통해 달성되며, 이는 Attribute Pattern의 유사한 필드를 그룹화하는 목적과 다릅니다.
+
+출처: [MongoDB Blog - Building with Patterns: The Attribute Pattern](https://www.mongodb.com/blog/post/building-with-patterns-the-attribute-pattern)
+
+> 모르던 개념
+
+### 질문 5 #countDocuments
+MongoDB 데이터베이스에 products라는 컬렉션이 있습니다. 동료가 이 컬렉션에 몇 개의 제품(문서)이 있는지 알고 싶어 합니다. 어떤 쿼리를 사용해야 합니까? 정답을 모두 선택하세요.
+
+**정답:**
+- **`db.products.countDocuments()`**: 이 쿼리는 `countDocuments()` 메서드를 사용하여 products 컬렉션의 문서 수를 반환합니다. 이는 컬렉션의 문서 수를 반환하는 권장 방법으로, 최신 MongoDB 버전에서 사용됩니다.
+- **`db.products.find().count()`**: 이 쿼리는 `find` 연산에서 `count()` 메서드를 사용하여 products 컬렉션의 문서 수를 계산합니다. 컬렉션의 모든 문서를 조회한 후 개수를 계산합니다. MongoDB에서 여전히 사용 가능하지만, `countDocuments()` 메서드로 대체되었습니다. 구버전 MongoDB에서는 여전히 사용할 수 있습니다.
+
+**오답:**
+- **`db.products.total()`**: `total()` 메서드는 MongoDB에 존재하지 않습니다.
+- **`db.products.aggregate()`**: `aggregate()` 메서드는 집계 연산을 수행하는 데 사용되며, 그룹화, 정렬 및 복잡한 계산을 포함합니다. 컬렉션의 문서 수를 직접 제공하지 않습니다.
+
+출처:
+- [count() 메서드 문서](https://docs.mongodb.com/manual/reference/method/db.collection.count/)
+- [countDocuments() 메서드 문서](https://docs.mongodb.com/manual/reference/method/db.collection.countDocuments/)
+
+> 모두 골라야한다는 것을 제대로 못봄
+
+### 질문 6 #obejctId #insertIds
+orders라는 이름의 MongoDB 컬렉션에 여러 문서를 삽입하고 삽입된 모든 문서의 _id 값을 반환하는 올바른 구문은 무엇입니까?
+
+**정답:**
+- `db.orders.insertMany([{ customer: "John Smith", product: "Book" }, { customer: "Jane Doe", product: "Laptop" }]).insertedIds`: MongoDB에서 여러 문서를 삽입하고 모든 삽입된 문서의 _id 값을 반환하려면 `insertMany()` 메서드 결과에 `insertedIds` 속성을 연결해야 합니다. 구문은 다음과 같습니다: `db.collection_name.insertMany([{ document1 }, { document2 }, ..., { documentN }]).insertedIds` 여기서 `collection_name`은 삽입할 컬렉션의 이름이며, 각 `{ document }`는 JavaScript 객체로 표현된 삽입할 문서입니다.
+
+**오답:**
+- `db.orders.insertMany([{ customer: "John Smith", product: "Book" }, { customer: "Jane Doe", product: "Laptop" }], { returnIds: true })`: `returnIds`는 `insertMany()` 메서드의 유효한 옵션이 아닙니다.
+- `db.orders.insertMany([{ customer: "John Smith", product: "Book" }, { customer: "Jane Doe", product: "Laptop" }]).returnIds`: `returnIds`는 `insertMany()` 메서드 결과의 속성이 아닙니다.
+- `db.orders.insert([{ customer: "John Smith", product: "Book" }, { customer: "Jane Doe", product: "Laptop" }], { returnIds: true })`: `insert()`는 하나의 문서를 삽입하기 위한 메서드이며, 여러 문서를 삽입할 수 없습니다.
+
+### 질문 9 #index #ESR
+다음과 같은 쿼리가 있습니다:
+```javascript
+db.gamers.find(
+    { "level": { "$gte" : 70 }, "map": "Inferno" } 
+).sort( { "points": 1, "group": 1 } )
+```
+이 쿼리를 가장 잘 지원하는 인덱스는 무엇입니까? 동등성, 정렬, 범위 규칙을 고려하십시오.
+
+**정답:**
+- **`{ map: 1, points: 1, group: 1, level: 1 }`**: 이 인덱스가 쿼리를 가장 잘 지원하는 이유는 MongoDB가 인덱싱을 처리하는 방식, 특히 "동등성, 정렬, 범위"(ESR) 규칙에 따라 최적의 인덱스를 정의하기 때문입니다. 이 규칙에 따르면, 가장 효율적인 인덱스는 다음과 같은 순서를 가집니다:
+  - 동등성 필드가 먼저
+  - 정렬 필드가 다음
+  - 범위 필드가 마지막
+
+  쿼리에서 동등성 필드는 "map"이고, 정렬 필드는 "points"와 "group"이며, 범위 필드는 "level"입니다. 따라서 ESR 규칙을 따르면서 가장 효율적인 인덱스는 `{ map: 1, points: 1, group: 1, level: 1 }`입니다.
+
+**오답:**
+- **`{ level: 1, map: 1, points: 1, group: 1 }`**: 이 인덱스는 범위 필드인 "level"로 시작하여 ESR 규칙을 위반합니다. 범위 필드는 가장 마지막에 배치해야 최적의 인덱스를 형성할 수 있습니다.
+- **`{ points: 1, group: 1, level: 1, map: 1 }`**: 이 인덱스는 정렬 필드 "points"와 "group"를 먼저 배치하고 동등성 필드 "map"을 마지막에 배치하여 ESR 규칙을 다시 위반합니다. 동등성 필드는 먼저, 다음에 정렬 필드를, 마지막에 범위 필드를 배치해야 합니다.
+- **`{ points: 1, group: 1, map: 1, level: 1 }`**: 이 인덱스는 정렬 필드로 시작하여 동등성 필드를 중간에 배치하고 ESR 규칙을 위반합니다. 순서는 동등성 필드, 정렬 필드, 범위 필드여야 합니다.
+
+출처:
+- [MongoDB 인덱스 문서](https://docs.mongodb.com/manual/indexes/)
+
+> 뭐지 이거 왜 틀렸지
+
+### 질문 15 #textSearch
+다음과 같은 문서 구조를 가진 movies 컬렉션이 있다고 가정합니다:
+```json
+{
+  _id: ObjectId("573a1390f29313caabcd60e4"),
+  title: 'The Immigrant',
+  fullplot: "Charlie is on his way to the USA. He wins in a card game, puts the money in Edna's bag (she and her sick mother have been robbed of everything). When he retrieves a little for himself he is accused of being a thief. Edna clears his name. Later, broke, Charlie finds a coin and goes into a restaurant."
+}
+```
+MongoDB의 텍스트 검색 쿼리에서 계산된 관련성 점수로 결과 집합을 정렬하고 점수가 가장 높은 세 개의 문서만 추출하려면 어떤 쿼리를 사용해야 합니까?
+
+**정답:**
+- `db.movies.find( { $text: { $search: 'spaceship' } }, { score: { $meta: 'textScore' } }, ).sort( { score: { $meta: 'textScore' } } ).limit(3)`: 이 쿼리는 MongoDB의 텍스트 검색 기능을 활용합니다. 'spaceship'이라는 용어를 포함하는 movies 컬렉션의 문서를 검색하고, 각 문서에 대해 MongoDB가 계산한 관련성 점수를 가져옵니다. 그런 다음, `sort()`를 사용하여 관련성 점수를 기준으로 결과 집합을 내림차순으로 정렬하고, `limit(3)`을 사용하여 상위 3개의 문서만 출력합니다.
+
+**오답:**
+- `db.movies.find( { $text: { $search: 'spaceship' } }, { score: { $meta: 'textScore' } }, ).sort( { score: { $meta: 'textScore' } } )`: 이 쿼리는 텍스트 검색을 수행하고 관련성 점수를 가져오지만, 결과 집합을 상위 3개 문서로 제한하지 않습니다. `limit(3)` 절이 없습니다.
+- `db.movies.find( {}, { score: { $meta: 'textScore' } }, ).sort( { score: { $meta: 'textScore' } } ).limit(3)`: 이 쿼리는 movies 컬렉션의 모든 문서를 검색하며, 'spaceship'이라는 용어에 대한 관련성 점수를 기준으로 문서를 정렬하고 추출하지 않습니다. 따라서 원하는 결과를 제공하지 않습니다.
+- `db.movies.find( { $text: { $search: 'spaceship' } }, { score: { $meta: 'textScore' } }, ).sort( { score: { $meta: 'score' } } ).limit(3)`: 이 쿼리는 `sort()` 단계에서 잘못된 $meta 값을 포함하고 있습니다. MongoDB가 계산한 관련성 점수를 기준으로 정렬하려면 'textScore' 값을 사용해야 합니다.
+
+출처:
+- [MongoDB 텍스트 검색 문서](https://docs.mongodb.com/manual/text-search/)
+- [MongoDB 텍스트 인덱스 문서](https://docs.mongodb.com/manual/core/index-text/)
+
+> sort쪽에도 textScore를 기준으로 정렬되었어야함
+
+### 질문 18 #aggregation 
+sales라는 컬렉션이 다음 형식의 문서를 포함한다고 가정합니다:
+```json
+{
+   "_id" : ObjectId("5f5f95aae2e85f9e7b33be5a"),
+   "product_id" : "P001",
+   "sale_date" : ISODate("2022-05-01T08:00:00Z"),
+   "quantity_sold" : 10,
+   "total_revenue" : 100
+}
+```
+MongoDB의 집계 프레임워크를 사용하여 각 달의 총 판매량과 총 수익을 계산하고 총 수익이 $50,000를 초과하는 달만 반환하려면 어떻게 해야 합니까?
+
+**정답:**
+```javascript
+  db.sales.aggregate([
+    {
+      $group: {
+        _id: { month: { $month: "$sale_date" }, year: { $year: "$sale_date" } },
+        totalQty: { $sum: "$quantity_sold" },
+        totalRevenue: { $sum: "$total_revenue" }
+      }
+    },
+    { $match: { totalRevenue: { $gt: 50000 } } }
+  ])
+  ```
+  
+  이 파이프라인은 먼저 "sale_date" 필드의 월과 연도로 문서를 그룹화하고, 각 월의 총 판매 수량과 총 수익을 계산합니다. 그런 다음 $match 단계를 사용하여 총 수익이 $50,000을 초과하는 월만 포함하도록 결과 집합을 필터링합니다.
+
+**오답:**
+```javascript
+  db.sales.aggregate([
+    {
+      $group: {
+        _id: { month: { $month: "$sale_date" }, year: { $year: "$sale_date" } },
+        totalRevenue: { $sum: "$total_revenue" },
+        totalQty: { $sum: "$quantity_sold" }
+      }
+    },
+    { $eq: { totalRevenue: { $gt: 50000 } } }
+  ])
+```
+
+이 옵션은 $match 연산자를 사용하지 않았습니다.
+
+```javascript
+  db.sales.aggregate([
+    {
+      $group: {
+        _id: { month: { $month: "$sale_date" } },
+        totalQty: { $sum: "$quantity_sold" },
+        totalRevenue: { $sum: "$total_revenue" }
+      }
+    },
+    { $match: { totalRevenue: { $gt: 50000 } } }
+  ])```
+
+이 옵션은 "sale_date" 필드의 월로만 문서를 그룹화하므로 완전한 집계 결과를 제공하지 않습니다.
+
+```
+  ₩db.sales.aggregate([
+    {
+      $group: {
+        _id: { year: { $year: "$sale_date" } },
+        totalQty: { $sum: "$quantity_sold" },
+        totalRevenue: { $sum: "$total_revenue" }
+      }
+    },
+    { $match: { totalRevenue: { $gt: 50000 } } }
+  ])
+```
+  
+이 옵션은 "sale_date" 필드의 연도로만 문서를 그룹화하므로 충분한 세부 집계 결과를 제공하지 않습니다.
+- [MongoDB 집계 파이프라인 문서](https://docs.mongodb.com/manual/core/aggregation/)
+
+> 월만 반환해야 한다 => project에 month만을 넣어야한다는 소리인줄, 그래서 month로 그룹한 것을 선택
+
+### 질문 20 #findAndModify #upsert
+MongoDB Node.js 드라이버를 사용하여 Node.js에서 서비스를 개발하고 있습니다. 여러 클라이언트가 동시에 문서의 특정 필드를 액세스하고 업데이트해야 하는 시나리오를 처리해야 합니다. findAndModify 메소드를 사용하기로 결정했습니다. 다음 옵션 중 문서 수정 처리를 올바르게 수행하는 접근 방식은 무엇입니까?
+
+**정답:**
+- `findAndModify` 메서드를 `{ new: true }` 옵션과 함께 사용하기. 
+  - **설명:** `{ new: true }` 옵션은 수정된 문서를 수정 후 반환하도록 보장합니다. 이는 각 요청이 가장 최신 버전의 문서로 작업할 수 있도록 하여 동시 요청을 처리하는 데 필수적입니다.
+
+**오답:**
+- `findAndModify` 메서드를 동시성 제어 옵션 없이 사용하기.
+  - **설명:** 아무 옵션 없이 `findAndModify` 메서드를 사용하는 것은 이 시나리오에서 필요한 원자성과 동시성 제어를 보장하지 않습니다. 이는 경쟁 조건을 초래할 수 있습니다.
+
+- `findAndModify` 메서드를 `{ upsert: true }` 옵션과 함께 사용하기.
+  - **설명:** `{ upsert: true }` 옵션은 쿼리와 일치하는 문서가 없을 경우 새 문서를 생성합니다. 이는 동시성 제어를 제공하지 않으며 여러 요청이 동시에 문서를 업데이트하려고 할 때 데이터 불일치를 초래할 수 있습니다.
+
+- `findAndModify` 메서드를 `{ returnNewDocument: true }` 옵션과 함께 사용하기.
+  - **설명:** `findAndModify` 메서드에는 `returnNewDocument` 옵션이 없습니다. 이 옵션은 `findOneAndUpdate` 메서드에서 사용됩니다.
+
+출처:
+- [MongoDB 문서 - findAndModify](https://docs.mongodb.com/manual/reference/method/db.collection.findAndModify/)
+
+### 질문 25 #데이터모델 
+MongoDB 환경에서 전자 상거래 애플리케이션의 제품에 대한 고객 리뷰를 저장하는 작업을 맡았습니다. 각 제품은 여러 리뷰를 가질 수 있으며, 각 리뷰에는 리뷰 작성자의 사용자 이름, 리뷰 내용, 날짜 및 별점(1~5점)이 포함됩니다. 이 경우 가장 적절한 데이터 모델링 접근 방식은 무엇입니까?
+
+**정답:**
+- 제품 문서의 "reviews" 필드에 각 리뷰를 별도의 문서로 저장하되, 제품당 최대 100개의 리뷰로 제한하기.
+  - **설명:** 이 접근 방식은 데이터 모델링의 유연성과 MongoDB의 문서 크기 제한을 초과하지 않도록 보장하는 좋은 균형을 제공합니다. 또한 제품을 쿼리할 때 리뷰에 효율적으로 접근할 수 있습니다.
+
+**오답:**
+- 리뷰를 별도의 컬렉션에 저장하고, 제품을 참조하는 외래 키를 사용하기.
+  - **설명:** 이 접근 방식은 제품의 리뷰를 가져오기 위해 여러 쿼리와 잠재적인 지연이 필요할 수 있습니다. MongoDB는 관련 데이터를 함께 저장하여 조인의 필요성을 최소화하는 것을 장려합니다.
+
+- 리뷰를 제품 문서에 직접 포함하되, 제한 없이 저장하기.
+  - **설명:** MongoDB 문서의 최대 크기 제한은 16MB입니다. 리뷰가 너무 많아지면 MongoDB 문서 크기 제한을 초과할 수 있어 문제가 될 수 있습니다.
+
+- 리뷰를 별도의 컬렉션에 저장하되, 제품과의 링크 없이 저장하기.
+  - **설명:** 이 접근 방식은 제품과 리뷰 간의 관계를 유지하지 않으므로 비효율적이며, 어떤 리뷰가 어떤 제품에 속하는지 이해하거나 검색하기 어렵습니다.
+
+- 제품 문서에 최신 리뷰만 저장하고 나머지는 별도의 컬렉션에 저장하기.
+  - **설명:** 이 접근 방식은 제품의 과거 리뷰에 접근할 때 비효율적일 수 있으며, 여러 쿼리가 필요하고 잠재적으로 상당한 지연이 발생할 수 있습니다.
+
+출처:
+- [MongoDB 데이터 모델링](https://www.mongodb.com/blog/post/5-tips-for-data-modeling-in-mongodb)
+
+> 아직 이해 못함
+
+### 질문 26 #set #inc
+$set 연산자를 사용하여 클래스 필드가 "B"인 모든 문서의 score 값을 1씩 증가시키려면 MongoDB 컬렉션 students에 있는 모든 문서를 업데이트하는 올바른 구문은 무엇입니까?
+
+**정답:**
+- ```javascript
+  db.students.updateMany({ class: "B" }, { $inc: { score: 1 } })
+  ```
+  이 구문은 `updateMany`를 사용하여 조건에 맞는 모든 문서를 업데이트하고, `$inc` 연산자를 사용하여 `score` 값을 1만큼 증가시킵니다.
+
+**오답:**
+- ```javascript
+  db.students.updateMany({ class: "B" }, { $set: { score: { $inc: 1 } }})
+  ```
+  `$inc` 연산자는 `$set` 내부에서 사용할 수 없습니다. `$set`은 필드를 지정된 값으로 설정하는 데 사용됩니다. 올바른 연산자는 `$inc`입니다.
+
+- ```javascript
+  db.students.update({ class: "B" }, { $inc: { score: 1 } })
+  ```
+  `update` 메서드는 더 이상 권장되지 않으며, `updateOne` 및 `updateMany`로 대체되었습니다.
+
+- ```javascript
+  db.students.updateMany({ class: "B" }, { $set: { score: { $plus: 1 } }})
+  ```
+  `$plus`는 유효한 MongoDB 연산자가 아닙니다. 값의 증가에는 `$inc` 연산자를 사용해야 합니다.
+
+출처:
+- [MongoDB 문서 - updateMany](https://docs.mongodb.com/manual/reference/method/db.collection.updateMany/)
+- [MongoDB 문서 - $inc](https://docs.mongodb.com/manual/reference/operator/update/inc/)
+> 처음알음
+### 질문 34 #index 
+MongoDB에서 성능 최적화를 할 때 인덱스가 중요한 역할을 합니다. MongoDB 인덱싱에 관한 다음 설명 중 틀린 것은 무엇입니까?
+
+**정답:**
+- **MongoDB는 단일 쿼리를 최적화하기 위해 하나 이상의 인덱스를 사용할 수 없다.**
+  - **설명:** 이 설명은 올바르지 않습니다. MongoDB는 단일 쿼리를 최적화하기 위해 하나 이상의 인덱스를 사용할 수 있습니다. 이는 "복합 인덱스"를 사용하여 쿼리를 최적화하는 방법입니다.
+
+**오답:**
+- **인덱스는 MongoDB에서 쿼리의 효율적인 실행을 지원한다.**
+  - **설명:** 인덱스는 쿼리 수행 시 MongoDB가 검토해야 하는 문서의 수를 제한하여 쿼리의 효율적인 실행을 지원합니다.
+
+- **인덱스가 없으면 MongoDB는 컬렉션의 모든 문서를 스캔하여 쿼리에 맞는 문서를 찾는다.**
+  - **설명:** 인덱스가 없으면 MongoDB는 컬렉션 스캔을 수행하여 쿼리 조건에 맞는 문서를 찾습니다.
+
+- **인덱스를 생성하면 쓰기 작업에 성능 영향을 미친다.**
+  - **설명:** 인덱스를 생성하면 문서를 삽입하거나 업데이트할 때마다 인덱스도 업데이트해야 하므로 쓰기 작업에 성능 영향을 미칩니다.
+
+출처:
+- [MongoDB 문서 - 인덱스](https://docs.mongodb.com/manual/indexes/)
+- [MongoDB 문서 - 복합 인덱스](https://docs.mongodb.com/manual/core/index-compound/)
+> 쓰기작업에 영향을 바로바로 끼치나? 인덱싱을 위한 친구들은 나중에 업데이트하는게 아닌지, 결국 몰라서 틀림
+### 질문 36 #aggregation #sortByCount
+MongoDB 데이터베이스에 users라는 컬렉션이 있다고 가정합니다. 컬렉션의 각 문서는 다음과 같이 구성됩니다:
+```json
+{
+  "_id": "<user id>",
+  "name": "<user name>",
+  "city": "<user's city>",
+  "country": "<user's country>"
+}
+```
+각 도시의 사용자 수를 세고 결과를 내림차순으로 정렬하는 집계 파이프라인을 작성하려고 합니다. 다음 단계 중 이를 올바르게 수행할 수 있는 단계는 무엇입니까?
+
+**정답:**
+```javascript
+  { "$sortByCount": "$city" }
+  ```
+  **설명:** `$sortByCount`는 문서를 특정 필드(여기서는 `city`)별로 그룹화하고 각 그룹의 문서 수를 계산한 후, 결과를 카운트 기준으로 내림차순으로 정렬합니다.
+
+**오답:**
+```javascript
+  { "$sortByCount": { "$city": 1 } }
+  ```
+  **설명:** `$sortByCount`는 필드 표현식을 기대하며, 문서 형태의 표현식을 허용하지 않습니다.
+
+```javascript
+  { "$sortByCount": { "$sort": { "city": -1 } } }
+  ```
+  **설명:** `$sortByCount`는 필드 표현식을 기대하므로, `{ "$sort": { "city": -1 } }` 형태의 문서 표현식은 유효하지 않습니다.
+
+```javascript
+  { "$sortByCount": "$country" }
+  ```
+  **설명:** `$sortByCount`는 `country`로 그룹화 및 카운트하므로, `city`가 아닌 `country` 기준으로 집계합니다.
+
+```javascript
+  { "$group": { "_id": "$city", "count": { "$sum": 1 } }, "$sort": { "count": -1 } }
+  ```
+  **설명:** `$group`과 `$sort`를 사용하여 `$sortByCount`의 기능을 재현하려고 하지만, 이들 단계는 서로 중첩되어서는 안 되며, 분리되어야 합니다. 올바른 순서로 적용해야 합니다.
+
+출처:
+- [MongoDB 문서 - 집계 파이프라인](https://docs.mongodb.com/manual/core/aggregation-pipeline/)
+- [MongoDB 문서 - $sortByCount](https://docs.mongodb.com/manual/reference/operator/aggregation/sortByCount/)
+> 몰라서 일부러 틀린 문제
+### 질문 43
+특정 쿼리에 대해 MongoDB가 특정 인덱스를 사용하도록 강제하려면 어떤 커서 메소드를 사용해야 합니까?
+
+**정답:**
+
+- **`cursor.hint()`**
+    - **설명:** MongoDB에서 데이터를 쿼리할 때 `cursor.hint()` 메서드를 사용하여 쿼리에 대해 특정 인덱스를 강제로 사용하도록 MongoDB에 지시할 수 있습니다. 이 메서드를 사용하면 MongoDB가 쿼리에 사용할 인덱스를 명시적으로 지정할 수 있어, 원하는 인덱스를 사용하고 쿼리 성능을 향상시킬 수 있습니다.
+
+**오답:**
+
+- **`cursor.index()`**
+    
+    - **설명:** `cursor.index()`는 MongoDB의 커서 객체에서 유효한 메서드가 아닙니다. 존재하지 않습니다.
+- **`cursor.use()`**
+    
+    - **설명:** `cursor.use()`는 MongoDB의 커서 객체에서 유효한 메서드가 아닙니다. 존재하지 않습니다.
+- **`cursor.explain()`**
+    
+    - **설명:** `cursor.explain()`은 쿼리 실행 및 최적화 계획에 대한 정보를 얻는 데 사용되지만, MongoDB가 특정 인덱스를 사용하도록 강제하지는 않습니다.
+
+ > 아 이거 쓰고있는데 이걸 까먹네..
+### 질문 45
+어떤 mongosh 명령어가 inventory 컬렉션에 연결된 인덱스 수를 보여줍니까?
+
+**정답:**
+- **`db.collection.getIndexes()`**
+  - **설명:** 이 명령은 MongoDB에서 컬렉션과 관련된 인덱스를 표시하는 데 사용됩니다. 이 명령은 컬렉션의 인덱스를 나타내는 객체 배열을 반환하며, 인덱스 이름, 키 패턴 및 기타 세부 정보가 포함됩니다.
+
+**오답:**
+- **`db.inventory.indexes()`**
+  - **설명:** 이 명령은 MongoDB 쉘에 존재하지 않습니다.
+
+- **`db.inventory.showIndexes()`**
+  - **설명:** 이 명령은 MongoDB 쉘에 존재하지 않습니다.
+
+- **`db.inventory.displayIndexes()`**
+  - **설명:** 이 명령은 MongoDB 쉘에 존재하지 않습니다.
+
+출처:
+- [MongoDB 문서 - db.collection.getIndexes()](https://www.mongodb.com/docs/manual/reference/method/db.collection.getIndexes/)
+> 몰라서 틀림
+### 질문 46 #replication
+수백만 건의 읽기 및 쓰기 작업이 매분 발생할 것으로 예상되는 고부하 웹 애플리케이션을 MongoDB를 사용하여 개발하고 있습니다. 데이터베이스 부하를 분산시키고 애플리케이션 성능을 향상시키기 위해 MongoDB의 복제 기능을 사용하여 레플리카 셋을 만들기로 결정했습니다. MongoDB의 복제에 대한 다음 설명 중 사실이 아닌 것은 무엇입니까?
+
+**정답:**
+- **모든 복제 세트는 여러 개의 기본 서버를 가질 수 있습니다.**
+  - **설명:** 이 설명은 잘못되었습니다. 각 복제 세트에는 단 하나의 기본 노드만 있을 수 있습니다. 기본 노드는 모든 쓰기 작업을 수신하고, 나머지 노드인 보조 노드들은 기본 노드의 oplog를 복제하고 그 작업을 데이터 세트에 적용합니다.
+
+**올바른 설명:**
+- **복제 세트는 동일한 데이터 세트를 유지하는 MongoDB 서버 그룹입니다.**
+  - **설명:** 모든 복제 세트의 멤버는 동일한 데이터 세트를 유지하여 높은 가용성과 데이터 중복성을 보장합니다.
+
+- **복제는 데이터 중복성과 가용성을 증가시킵니다.**
+  - **설명:** 복제를 통해 데이터를 여러 서버에 중복 저장하여 데이터 가용성을 증가시킬 수 있습니다.
+
+- **복제 세트에서 쓰기 작업을 수행할 수 있는 것은 기본 노드만입니다.**
+  - **설명:** 복제 세트에서 오직 기본 노드만이 쓰기 작업을 수행할 수 있습니다. 나머지 노드들은 보조 노드로서 기본 노드의 oplog를 복제하고 그 작업을 데이터 세트에 적용합니다.
+
+- **복제 세트는 두 대의 서버(하나는 기본, 하나는 보조)로 구성될 수 있습니다.**
+  - **설명:** 복제 세트는 최소 두 대의 서버로 구성될 수 있습니다. 그러나 일반적으로 보다 견고한 시스템을 보장하기 위해 최소한 세 대의 서버를 권장합니다.
+
+### 질문 50 #tokenization #autoComplete
+다음과 같은 문서를 포함하는 컬렉션이 있습니다:
+```json
+ { _id: 1, name: 'Oatmeal Fruit Cake with Gummy Bears ', price: 11)}
+ { _id: 2, name: 'Cheesecake Trifle with Chocolate Sprinkles ', price: 14)}
+ { _id: 3, name: 'Pistachio Brownie with Walnuts ', price: 5},
+ { _id: 4, name: 'Strawberry Ice Cream Cake with Butterscotch Syrup ', price: 3)}
+```
+name 필드에서 단어의 시작 부분과 일치하는 항목을 찾기 위해 자동 완성 인덱스를 어떻게 정의해야 합니까?
+
+**정답:**
+- **`{ "type": "autocomplete", "tokenization": "edgeGram" }`**
+  - **설명:** 이 옵션은 "edgeGram" 토크나이저를 사용하여 텍스트를 n-그램(지정된 길이의 서브스트링)으로 분할합니다. 이 토크나이저는 각 단어의 시작 부분에서 n-그램을 생성하므로, 단어의 시작 부분에서 일치를 찾는 데 적합합니다.
+
+**오답:**
+- **`{ "type": "autocomplete", "tokenization": "regexCaptureGroup" }`**
+  - **설명:** "regexCaptureGroup" 토크나이저는 단어의 시작 부분에서만 일치하는 것을 찾지 않습니다. 이는 정규 표현식 캡처 그룹을 사용하는 방식으로, 일반적인 자동 완성 요구 사항에는 맞지 않습니다.
+
+- **`{ "type": "autocomplete", "tokenization": "nGram" }`**
+  - **설명:** "nGram" 토크나이저는 단어의 시작 부분에서 일치를 찾는 데 최적화되어 있지 않습니다. 이는 텍스트의 모든 부분을 n-그램으로 나누어 검색하는 방식입니다.
+
+- **`{ "type": "autocomplete", "tokenization": "matchNGram" }`**
+  - **설명:** "matchNGram"은 유효한 토크나이저 알고리즘이 아닙니다. 이 옵션은 MongoDB에서 지원되지 않는 토크나이저입니다.
+
+### 질문 51 #out
+MongoDB에서 $out 연산자는 일반적으로 집계 파이프라인 내에서 사용됩니다. $out 연산자의 기능과 사용법을 정확하게 설명한 것은 무엇입니까?
+
+**정답:**
+- **`$out 연산자는 집계 파이프라인의 결과를 지정한 컬렉션으로 출력하는 데 사용됩니다.`**
+  - **설명:** `$out` 연산자는 집계 파이프라인의 결과를 지정한 컬렉션에 출력합니다. 이 작업은 결과 문서로 기존 컬렉션의 모든 문서를 대체합니다.
+
+**오답:**
+- **`$out 연산자는 단일 명령으로 여러 컬렉션에서 데이터를 읽는 데 사용됩니다.`**
+  - **설명:** 이는 `$lookup` 연산자의 기능입니다. `$lookup` 연산자는 다른 컬렉션과의 왼쪽 외부 조인을 수행하여 문서를 필터링합니다.
+
+- **`$out 연산자는 데이터를 직접 파일로 내보내는 데 사용됩니다.`**
+  - **설명:** `$out` 연산자는 데이터를 컬렉션에 쓰는 데 사용됩니다. MongoDB에는 데이터를 직접 파일로 내보내는 내장 연산자가 없습니다.
+
+- **`$out 연산자는 결과를 다른 MongoDB 데이터베이스의 컬렉션으로 출력하는 데 사용됩니다.`**
+  - **설명:** `$out` 연산자는 동일한 데이터베이스 내의 컬렉션으로만 출력을 할 수 있습니다. 데이터베이스 간 데이터 전송에는 `mongoexport`와 `mongoimport` 같은 다른 방법이 필요합니다.
+
+> 몰라서 틀림
+
+### 질문 53 #데이터모델링 
+MongoDB에서 데이터 모델을 설계할 때 최적의 성능과 데이터 일관성을 달성하기 위해 중요한 고려 사항은 무엇입니까?
+
+**정답:**
+- **`애플리케이션의 데이터 액세스 패턴에 따라 데이터 모델을 설계하십시오.`**
+  - **설명:** 애플리케이션의 데이터 액세스 패턴에 따라 데이터 모델을 설계하는 것은 최적의 성능과 데이터 일관성을 달성하는 데 필수적입니다. 애플리케이션이 데이터를 어떻게 읽고 쓰는지 아는 것은 문서 구조, 인덱싱, 샤딩 등의 지능적인 선택을 하는 데 도움을 줍니다.
+
+**오답:**
+- **`MongoDB 컬렉션에는 10,000개 이상의 문서가 있어서는 안 됩니다.`**
+  - **설명:** MongoDB에서는 컬렉션에 문서 수에 대한 제한이 없습니다. 컬렉션의 문서 수는 저장소, 하드웨어, 애플리케이션의 특정 요소에 따라 다를 수 있습니다.
+
+- **`항상 참조(정규화)를 사용하고 임베디드 문서(비정규화)는 사용하지 않아야 합니다.`**
+  - **설명:** 항상 참조(정규화)를 사용하는 것이 아니라 임베디드 문서(비정규화)를 사용하는 것이 좋습니다. 참조는 추가적인 데이터베이스 작업과 복잡성을 초래할 수 있습니다. 정규화와 비정규화 간의 선택은 데이터 액세스 패턴, 문서의 크기, 데이터 변경 빈도 등의 요소에 따라 결정되어야 합니다.
+
+- **`항상 임베디드 문서(비정규화)를 사용하고 참조(정규화)는 사용하지 않아야 합니다.`**
+  - **설명:** 항상 임베디드 문서(비정규화)를 사용하는 것이 아니라 참조(정규화)를 사용하는 것이 좋습니다. 임베디드 문서는 큰 문서와 중복 데이터를 초래할 수 있습니다. 이 선택은 애플리케이션의 요구 사항, 데이터 액세스 패턴, 데이터의 성격에 따라 달라져야 합니다.
+
+- **`인덱스는 MongoDB에서 중요하지 않으며 인덱스 없이도 잘 동작합니다.`**
+  - **설명:** 인덱스는 MongoDB에서 읽기 작업 성능을 개선하는 데 중요합니다. 인덱스가 없으면 MongoDB는 컬렉션의 모든 문서를 스캔하여 쿼리 조건과 일치하는 문서를 선택해야 합니다.
+
+> crucial consideration => 최악의 결정을 고르라는줄
+
+### 질문 57 #driver
+MongoDB를 백엔드 데이터베이스로 사용하는 대규모 전자 상거래 플랫폼을 개발하고 있습니다. 애플리케이션은 효율적인 데이터 검색을 요구하며 복잡한 검색 쿼리를 지원합니다. 이 시나리오에서 MongoDB 드라이버 및 인덱싱의 역할에 대해 정확하게 설명한 문장은 무엇입니까? 정답을 모두 선택하세요.
+
+**정답:**
+- **`MongoDB 드라이버는 인덱스의 생성 및 관리를 처리하여 쿼리 성능을 개선합니다.`**
+  - **설명:** MongoDB 드라이버는 인덱스의 생성 및 관리 역할을 수행합니다. 드라이버는 MongoDB 컬렉션에서 인덱스를 생성, 수정 및 삭제할 수 있는 메서드와 API를 제공합니다. 인덱스는 특정 쿼리 조건에 따라 더 빠른 데이터 검색을 가능하게 하여 쿼리 성능을 크게 향상시킵니다.
+
+**오답:**
+- **`MongoDB 드라이버는 자동으로 데이터를 분석하고 가장 효율적인 인덱싱 전략을 결정합니다.`**
+  - **설명:** MongoDB 드라이버는 자동으로 데이터를 분석하고 가장 효율적인 인덱싱 전략을 결정하지 않습니다. 인덱싱 전략은 데이터 모델, 쿼리 패턴, 성능 요구 사항 등의 요소에 따라 달라지며, 이는 개발자나 데이터베이스 관리자가 결정해야 하는 부분입니다.
+
+- **`MongoDB 드라이버는 복잡한 검색 쿼리의 실행을 가능하게 하며 쿼리 최적화 및 인덱싱 메커니즘을 제공합니다.`**
+  - **설명:** MongoDB 드라이버는 데이터베이스와 상호작용하지만, 쿼리 최적화 및 인덱싱 메커니즘은 MongoDB 자체의 기능입니다. MongoDB의 쿼리 최적화기는 사용 가능한 인덱스와 쿼리 조건을 기반으로 가장 효율적인 쿼리 실행 계획을 자동으로 평가하고 선택합니다.
+
+- **`MongoDB 드라이버는 인덱스의 적절한 사용을 보장함으로써 데이터 일관성과 무결성을 강제합니다.`**
+  - **설명:** MongoDB 드라이버는 데이터를 상호작용하고 다양한 작업을 수행하지만, 인덱스의 사용을 통해 데이터 일관성과 무결성을 강제하지는 않습니다. 데이터 일관성과 무결성을 보장하는 것은 적절한 데이터 모델링, 적절한 인덱싱, 애플리케이션 수준의 데이터 검증 및 비즈니스 로직의 준수에 달려 있습니다.
+> 함정이었네, 1개만 답변임
+### 질문 59 #sample #aggregation 
+특정 컬렉션에서 임의로 10개의 문서를 선택하려면 어떤 단계를 사용해야 합니까?
+
+다음은 MongoDB Aggregation Framework에서 무작위로 문서를 선택할 때 사용하는 올바른 문법과 잘못된 문법에 대한 설명입니다:
+
+올바른 답변:
+
+**`{ $sample: { size: 10 } }`**  
+- **설명:** `$sample` 단계는 MongoDB Aggregation Framework에서 무작위로 문서를 선택할 때 사용합니다. `size` 필드를 사용하여 샘플링할 문서의 수를 지정할 수 있습니다. 이 경우 `size: 10`은 무작위로 10개의 문서를 선택하겠다는 의미입니다.
+
+잘못된 답변:
+
+1. **`{ $sample: { get: 10 } }`**
+   - **설명:** 이 문법은 `$sample` 단계의 올바른 문법이 아닙니다. `$sample` 단계는 `get` 필드를 사용하지 않으며, 문서 수를 지정하기 위해 `size` 필드를 사용합니다.
+
+2. **`{ $rand: { size: 10 } }`**
+   - **설명:** `$rand` 단계는 Aggregation Framework에서 유효하지 않습니다. MongoDB에는 무작위 문서를 선택하기 위한 `$rand` 연산자가 없습니다.
+
+3. **`{ $sampleRate: { size: 10 } }`**
+   - **설명:** `$sampleRate`는 Aggregation Framework에서 유효한 단계가 아닙니다. MongoDB에는 무작위 문서를 선택하기 위한 `$sampleRate` 단계가 없습니다.
+
+### 참고 문서:
+
+- [MongoDB Aggregation `$sample` 연산자 문서](https://docs.mongodb.com/manual/reference/operator/aggregation/sample/)
