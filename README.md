@@ -8,7 +8,7 @@
 - [MongoDB Official Certification course](https://learn.mongodb.com/learning-paths/mongodb-nodejs-developer-path) 듣고 개인 공부
 
 ## 🤼 MongoDB 전문가가 될 사람들
-| <img src="https://avatars.githubusercontent.com/u/5876149?v=4" /> | <img src="https://github.com/user-attachments/assets/f22a88f1-2ce6-4a72-994b-f15e363848db" /> | <img src="https://github.com/user-attachments/assets/db9fcf53-5c4a-4308-bdc2-c9b69a1320b8" /> | <img src="https://avatars.githubusercontent.com/u/74497253?v=4" /> | 
-| --- | --- | --- | --- | 
-| **[김원호](https://github.com/gitdog01)** | **[채정아](https://github.com/jokj624)** |**[김진호](https://github.com/reach0908)** | **[백광인](https://github.com/RookieAND)** | 
+| <img src="https://avatars.githubusercontent.com/u/5876149?v=4" /> | <img src="https://github.com/user-attachments/assets/f22a88f1-2ce6-4a72-994b-f15e363848db" /> | <img src="https://github.com/user-attachments/assets/db9fcf53-5c4a-4308-bdc2-c9b69a1320b8" /> | <img src="https://avatars.githubusercontent.com/u/74497253?v=4" /> | <img src="https://avatars.githubusercontent.com/u/61740850?v=4" /> |
+| --- | --- | --- | --- | --- |
+| **[김원호](https://github.com/gitdog01)** | **[채정아](https://github.com/jokj624)** |**[김진호](https://github.com/reach0908)** | **[백광인](https://github.com/RookieAND)** | **[김영호](https://github.com/JadenKim-dev)** |
 
