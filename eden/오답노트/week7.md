@@ -4,7 +4,7 @@ Practive Test 후 몰랐거나 헷갈린 내용, 새롭게 공부한 내용 등�
 
 ## 결과
 
-![Alt text](./images/test6.png)
+![Alt text](./images/week6-result.png)
 
 ## 오답 정리
 
